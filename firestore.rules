@@ -1,0 +1,228 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return signedIn() && request.auth.uid == userId;
+    }
+
+    function userDoc() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid));
+    }
+
+    function roleIs(role) {
+      return signedIn() && userDoc().data.role == role;
+    }
+
+    function isAdmin() {
+      return roleIs('admin');
+    }
+
+    function isOwnerRole() {
+      return roleIs('owner');
+    }
+
+    function isTechnicianRole() {
+      return roleIs('technician');
+    }
+
+    function canManagePlatform() {
+      return isAdmin() || isOwnerRole();
+    }
+
+    function orderDoc(orderId) {
+      return get(/databases/$(database)/documents/orders/$(orderId));
+    }
+
+    function canAccessOrder(orderId) {
+      return signedIn() && (
+        canManagePlatform() ||
+        orderDoc(orderId).data.clientId == request.auth.uid ||
+        orderDoc(orderId).data.technicianId == request.auth.uid
+      );
+    }
+
+    match /users/{userId} {
+      allow read: if signedIn();
+      allow create: if isOwner(userId);
+      allow update: if isOwner(userId) || canManagePlatform();
+      allow delete: if false;
+    }
+
+    match /orders/{orderId} {
+      allow read: if signedIn() && (
+        canManagePlatform() ||
+        resource.data.clientId == request.auth.uid ||
+        resource.data.technicianId == request.auth.uid ||
+        (
+          isTechnicianRole() &&
+          resource.data.city == userDoc().data.city
+        )
+      );
+
+      allow create: if signedIn() && request.resource.data.clientId == request.auth.uid;
+
+      allow update: if signedIn() && (
+        canManagePlatform() ||
+        resource.data.clientId == request.auth.uid ||
+        resource.data.technicianId == request.auth.uid
+      );
+
+      allow delete: if false;
+    }
+
+    match /orders/{orderId}/messages/{messageId} {
+      allow read, create: if canAccessOrder(orderId);
+      allow update, delete: if false;
+    }
+
+    match /notifications/{notificationId} {
+      allow read: if signedIn() && (
+        canManagePlatform() ||
+        resource.data.userId == request.auth.uid
+      );
+
+      allow create: if signedIn();
+
+      allow update: if signedIn() && (
+        canManagePlatform() ||
+        resource.data.userId == request.auth.uid
+      );
+
+      allow delete: if signedIn() && (
+        canManagePlatform() ||
+        resource.data.userId == request.auth.uid
+      );
+    }
+
+    match /reviews/{reviewId} {
+      allow read: if true;
+      allow create: if signedIn() && request.resource.data.clientId == request.auth.uid;
+      allow update: if canManagePlatform();
+      allow delete: if false;
+    }
+
+    match /client_reviews/{reviewId} {
+      allow read: if signedIn() && (
+        canManagePlatform() ||
+        resource.data.clientId == request.auth.uid ||
+        resource.data.technicianId == request.auth.uid
+      );
+      allow create: if signedIn() &&
+        request.resource.data.technicianId == request.auth.uid;
+      allow update: if canManagePlatform();
+      allow delete: if false;
+    }
+
+    match /services/{serviceId} {
+      allow read: if true;
+      allow create, update: if signedIn() && (
+        canManagePlatform() ||
+        request.resource.data.technicianId == request.auth.uid
+      );
+      allow delete: if signedIn() && (
+        canManagePlatform() ||
+        resource.data.technicianId == request.auth.uid
+      );
+    }
+
+    match /app_config/{configId} {
+      allow read: if signedIn();
+      allow create, update: if canManagePlatform();
+      allow delete: if false;
+    }
+
+    match /technician_payouts/{payoutId} {
+      allow read: if signedIn() && (
+        canManagePlatform() ||
+        resource.data.technicianId == request.auth.uid
+      );
+      allow create, update: if canManagePlatform();
+      allow delete: if false;
+    }
+
+    match /technician_payout_requests/{requestId} {
+      allow read: if signedIn() && (
+        canManagePlatform() ||
+        resource.data.technicianId == request.auth.uid
+      );
+      allow create, update: if signedIn() && (
+        canManagePlatform() ||
+        request.resource.data.technicianId == request.auth.uid
+      );
+      allow delete: if false;
+    }
+
+    match /client_refund_requests/{requestId} {
+      allow read: if signedIn() && (
+        canManagePlatform() ||
+        resource.data.clientId == request.auth.uid
+      );
+      allow create, update: if signedIn() && (
+        canManagePlatform() ||
+        request.resource.data.clientId == request.auth.uid
+      );
+      allow delete: if false;
+    }
+
+    match /client_wallet_transactions/{transactionId} {
+      allow read: if signedIn() && (
+        canManagePlatform() ||
+        resource.data.clientId == request.auth.uid
+      );
+      allow create: if signedIn() && (
+        canManagePlatform() ||
+        request.resource.data.clientId == request.auth.uid
+      );
+      allow update, delete: if false;
+    }
+
+    match /subscription_payment_requests/{requestId} {
+      allow read: if signedIn() && (
+        canManagePlatform() ||
+        resource.data.technicianId == request.auth.uid
+      );
+      allow create, update: if signedIn() && (
+        canManagePlatform() ||
+        request.resource.data.technicianId == request.auth.uid
+      );
+      allow delete: if false;
+    }
+
+    match /emergency_reports/{reportId} {
+      allow read: if signedIn() && (
+        canManagePlatform() ||
+        resource.data.reportedBy == request.auth.uid ||
+        resource.data.technicianId == request.auth.uid
+      );
+      allow create: if signedIn();
+      allow update: if canManagePlatform();
+      allow delete: if false;
+    }
+
+    match /service_claims/{claimId} {
+      allow read: if signedIn() && (
+        canManagePlatform() ||
+        resource.data.clientId == request.auth.uid ||
+        resource.data.technicianId == request.auth.uid
+      );
+      allow create: if signedIn() &&
+        request.resource.data.clientId == request.auth.uid;
+      allow update: if canManagePlatform();
+      allow delete: if false;
+    }
+
+    match /owner_alerts/{alertId} {
+      allow read, update: if isOwnerRole();
+      allow create: if signedIn();
+      allow delete: if isOwnerRole();
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

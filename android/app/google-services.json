@@ -1,0 +1,98 @@
+{
+  "project_info": {
+    "project_number": "809573891168",
+    "project_id": "panafix-app",
+    "storage_bucket": "panafix-app.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:809573891168:android:9633ba3d24e653fc5b5705",
+        "android_client_info": {
+          "package_name": "com.example.panafix"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "809573891168-jmr0h4uphe9ompgflmihk4j16t500m0b.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.panafix",
+            "certificate_hash": "aa37e6d1d3a46603b3af5a64f367f9965fca1fcb"
+          }
+        },
+        {
+          "client_id": "809573891168-ndkh3i3ji2a6k0smoe0njst182livj5t.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBbqx6py8QC4UqhqVRfLQiIleTq4DtD2Es"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "809573891168-ndkh3i3ji2a6k0smoe0njst182livj5t.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "809573891168-nqbv1ikoa0ehs6u4utfketsffqfe6fh4.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.panafix"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:809573891168:android:8316440fc37f719b5b5705",
+        "android_client_info": {
+          "package_name": "com.panafix.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "809573891168-4am9s61s4jfv1fbpvbfl7u61ug0kieej.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.panafix.app",
+            "certificate_hash": "4dc91c69f052c0a14701cd6048652059469daf79"
+          }
+        },
+        {
+          "client_id": "809573891168-ndkh3i3ji2a6k0smoe0njst182livj5t.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBbqx6py8QC4UqhqVRfLQiIleTq4DtD2Es"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "809573891168-ndkh3i3ji2a6k0smoe0njst182livj5t.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "809573891168-nqbv1ikoa0ehs6u4utfketsffqfe6fh4.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.panafix"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

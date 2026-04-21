@@ -1,0 +1,88 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function userDoc() {
+      return firestore.get(/databases/(default)/documents/users/$(request.auth.uid));
+    }
+
+    function isAdmin() {
+      return signedIn() && userDoc().data.role == 'admin';
+    }
+
+    function isOwner() {
+      return signedIn() && userDoc().data.role == 'owner';
+    }
+
+    function canManagePlatform() {
+      return isAdmin() || isOwner();
+    }
+
+    function orderDoc(orderId) {
+      return firestore.get(/databases/(default)/documents/orders/$(orderId));
+    }
+
+    function canAccessOrder(orderId) {
+      return signedIn() && (
+        canManagePlatform() ||
+        orderDoc(orderId).data.clientId == request.auth.uid ||
+        orderDoc(orderId).data.technicianId == request.auth.uid
+      );
+    }
+
+    match /payment_proofs/{orderId}/{fileName} {
+      allow read, write: if canAccessOrder(orderId);
+    }
+
+    match /request_problem_photos/{orderId}/{fileName} {
+      allow read: if signedIn();
+      allow write: if canAccessOrder(orderId);
+    }
+
+    match /technician_photos/{userId}/{fileName} {
+      allow read: if true;
+      allow write: if signedIn() && (
+        request.auth.uid == userId ||
+        canManagePlatform()
+      );
+    }
+
+    match /client_photos/{userId}/{fileName} {
+      allow read: if true;
+      allow write: if signedIn() && (
+        request.auth.uid == userId ||
+        canManagePlatform()
+      );
+    }
+
+    match /technician_verification/{userId}/{fileName} {
+      allow read: if signedIn() && (
+        request.auth.uid == userId ||
+        canManagePlatform()
+      );
+      allow write: if signedIn() && (
+        request.auth.uid == userId ||
+        canManagePlatform()
+      );
+    }
+
+    match /service_claim_evidence/{orderId}/{fileName} {
+      allow read, write: if canAccessOrder(orderId);
+    }
+
+    match /subscription_payment_proofs/{userId}/{fileName} {
+      allow read: if signedIn() && (
+        request.auth.uid == userId ||
+        canManagePlatform()
+      );
+      allow write: if signedIn() && request.auth.uid == userId;
+    }
+
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}
