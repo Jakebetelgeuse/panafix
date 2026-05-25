@@ -1250,7 +1250,7 @@ class _TechnicianHomePageState extends State<TechnicianHomePage> {
       case 'rejected':
         return 'Tus documentos no fueron aprobados todavia. Puedes actualizarlos y volver a solicitar la verificacion cuando quieras.';
       default:
-        return 'Si quieres verificarte, sube tu cedula y un soporte profesional. Cuando los envies, Panafix recibira tu solicitud de verificacion.';
+        return 'Si quieres verificarte, sube tu cedula y un soporte profesional. Panafix los revisara para proteger a clientes y tecnicos durante pagos, reclamos y servicios activos.';
     }
   }
 
@@ -1390,7 +1390,7 @@ class _TechnicianHomePageState extends State<TechnicianHomePage> {
           ),
           const SizedBox(height: 8),
           const Text(
-            'Puedes subir foto de cedula y un certificado o soporte profesional para que Panafix revise tu perfil. Por ahora es opcional, pero ayuda a generar mas confianza.',
+            'Puedes subir foto de cedula y un certificado o soporte profesional para que Panafix revise tu perfil. Es opcional, ayuda a generar confianza y protege a cliente y tecnico durante pagos, reclamos y soporte.',
             style: TextStyle(
               color: Color(0xFF6D5E4F),
               height: 1.4,

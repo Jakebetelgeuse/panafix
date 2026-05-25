@@ -78,15 +78,6 @@ class _RegisterPageState extends State<RegisterPage> {
       return;
     }
 
-    if (selectedRole == 'client' && identityDocument.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('La cedula de identidad es obligatoria para clientes.'),
-        ),
-      );
-      return;
-    }
-
     if (!acceptsTerms) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Debes aceptar las condiciones de uso.')),
@@ -133,8 +124,9 @@ class _RegisterPageState extends State<RegisterPage> {
         'isAvailable': selectedRole == 'technician',
         'verificationStatus':
             selectedRole == 'technician' ? 'pending' : 'approved',
-        'clientVerificationStatus':
-            selectedRole == 'client' ? 'provided' : '',
+        'clientVerificationStatus': selectedRole == 'client'
+            ? (identityDocument.isEmpty ? 'not_provided' : 'provided')
+            : '',
         'subscriptionPlan': 'basic',
         'subscriptionStatus': 'inactive',
         'subscriptionPriority': 0,
@@ -409,11 +401,11 @@ class _RegisterPageState extends State<RegisterPage> {
                             decoration: InputDecoration(
                               labelText: isTechnician
                                   ? 'Cedula o documento'
-                                  : 'Cedula de identidad',
+                                  : 'Cedula de identidad (opcional)',
                               prefixIcon: const Icon(Icons.badge_outlined),
                               hintText: isTechnician
                                   ? 'Opcional por ahora'
-                                  : 'Obligatorio para verificar tu cuenta',
+                                  : 'Opcional',
                             ),
                           ),
                           const SizedBox(height: 14),

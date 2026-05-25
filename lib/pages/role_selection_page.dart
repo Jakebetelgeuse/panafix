@@ -74,15 +74,6 @@ class _RoleSelectionPageState extends State<RoleSelectionPage> {
       return;
     }
 
-    if (selectedRole == 'client' && identityDocument.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('La cedula es necesaria para crear tu perfil.'),
-        ),
-      );
-      return;
-    }
-
     setState(() {
       isSaving = true;
     });
@@ -105,8 +96,9 @@ class _RoleSelectionPageState extends State<RoleSelectionPage> {
         'isAvailable': selectedRole == 'technician',
         'verificationStatus':
             selectedRole == 'technician' ? 'pending' : 'approved',
-        'clientVerificationStatus':
-            selectedRole == 'client' ? 'provided' : '',
+        'clientVerificationStatus': selectedRole == 'client'
+            ? (identityDocument.isEmpty ? 'not_provided' : 'provided')
+            : '',
         'subscriptionPlan': 'basic',
         'subscriptionStatus': 'inactive',
         'subscriptionPriority': 0,
@@ -336,7 +328,7 @@ class _RoleSelectionPageState extends State<RoleSelectionPage> {
                             controller: identityDocumentController,
                             keyboardType: TextInputType.text,
                             decoration: const InputDecoration(
-                              labelText: 'Cedula de identidad',
+                              labelText: 'Cedula de identidad (opcional)',
                               prefixIcon: Icon(Icons.badge_outlined),
                             ),
                           ),
