@@ -58,6 +58,17 @@ service firebase.storage {
       );
     }
 
+    match /client_verification/{userId}/{fileName} {
+      allow read: if signedIn() && (
+        request.auth.uid == userId ||
+        canManagePlatform()
+      );
+      allow write: if signedIn() && (
+        request.auth.uid == userId ||
+        canManagePlatform()
+      );
+    }
+
     match /technician_verification/{userId}/{fileName} {
       allow read: if signedIn() && (
         request.auth.uid == userId ||
